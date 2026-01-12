@@ -1,86 +1,196 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<"blog">["data"];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props as Props;
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      :root{
+        --bg: #0077b6;
+        --panel: #030452;
+        --text: rgba(255,255,255,0.92);
+        --muted: #030452;
+        --border: #030452;
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+        --max: 980px;
+        --r: 18px;
+      }
+
+      *{ box-sizing: border-box; }
+
+      body{
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Apple Color Emoji","Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a{ color: inherit; }
+
+      main{
+        width: min(100%, 960px);
+        margin: 0 auto;
+        padding: 22px 18px 0;
+      }
+
+      .pill{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 2px solid var(--border);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 900;
+        line-height: 1;
+        transition: transform 120ms ease;
+      }
+      .pill:hover{ transform: translateY(-1px); }
+
+      .hero{
+        margin-top: 14px;
+        background: var(--panel);
+        border: 2px solid var(--border);
+        border-radius: var(--r);
+        padding: 10px;
+      }
+
+      .hero :global(img){
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 14px;
+      }
+
+      .post-head{
+        margin-top: 14px;
+        text-align: center;
+      }
+
+      .post-head h1{
+        margin: 10px 0 6px;
+        font-size: clamp(30px, 4.2vw, 56px);
+        letter-spacing: -0.8px;
+        line-height: 1.05;
+        font-weight: 950;
+      }
+
+      .meta{
+        font-weight: 900;
+        opacity: 0.95;
+        margin: 0 0 10px;
+      }
+
+      .updated{
+        font-style: italic;
+        margin-top: 4px;
+        opacity: 0.95;
+      }
+
+      .card{
+        background: var(--panel);
+        border: 2px solid var(--border);
+        border-radius: var(--r);
+        padding: 18px;
+      }
+
+      .prose{
+        width: min(100%, 720px);
+        margin: 14px auto 0;
+      }
+
+      .rule{
+        border: 0;
+        border-top: 2px solid var(--border);
+        margin: 14px auto 0;
+        width: min(100%, 520px);
+        opacity: 1;
+      }
+
+      /* Markdown typography */
+      .prose :global(h2),
+      .prose :global(h3){
+        margin: 1.2em 0 0.4em;
+        line-height: 1.2;
+      }
+
+      .prose :global(p){
+        margin: 0.9em 0;
+      }
+
+      .prose :global(a){
+        color: white;
+        text-underline-offset: 3px;
+      }
+
+      .prose :global(code){
+        background: rgba(255,255,255,0.12);
+        padding: 2px 6px;
+        border-radius: 8px;
+      }
+
+      .prose :global(pre){
+        background: rgba(0,0,0,0.30);
+        padding: 16px;
+        border-radius: 14px;
+        overflow-x: auto;
+        border: 2px solid var(--border);
+      }
+
+      .prose :global(img){
+        max-width: 100%;
+        border-radius: 14px;
+        border: 2px solid var(--border);
+      }
+    </style>
+  </head>
+
+  <body>
+    <Header />
+
+    <main>
+      <a class="pill" href="/blog">← Back to devlog</a>
+
+      {heroImage && (
+        <div class="hero">
+          <Image width={1020} height={510} src={heroImage} alt="" />
+        </div>
+      )}
+
+      <header class="post-head">
+        <p class="meta">
+          <FormattedDate date={pubDate} />
+          {updatedDate && (
+            <div class="updated">
+              Last updated on <FormattedDate date={updatedDate} />
+            </div>
+          )}
+        </p>
+
+        <h1>{title}</h1>
+        <hr class="rule" />
+      </header>
+
+      <article class="prose card">
+        <slot />
+      </article>
+    </main>
+
+    <Footer />
+  </body>
 </html>
