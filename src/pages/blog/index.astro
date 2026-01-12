@@ -1,114 +1,118 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION} mainWidth="960px">
+  <section class="card">
+    <ul>
+      {
+        posts.map((post, idx) => (
+          <li class={idx === 0 ? "featured" : ""}>
+            <a class="post" href={`/blog/${post.id}/`}>
+              {post.data.heroImage && (
+                <Image width={720} height={360} src={post.data.heroImage} alt="" />
+              )}
+              <h4 class="title">{post.data.title}</h4>
+              <p class="date">
+                <FormattedDate date={post.data.pubDate} />
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <style>
+    ul{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul li{
+      width: calc(50% - 7px);
+    }
+
+    ul li *{
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    /* first post featured */
+    ul li.featured{
+      width: 100%;
+      text-align: center;
+    }
+    ul li.featured :global(img){
+      width: 100%;
+    }
+    ul li.featured .title{
+      font-size: 2.2rem;
+    }
+
+    :global(img){
+      margin-bottom: 10px;
+      border-radius: 12px;
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+    }
+
+    .post{
+      display:block;
+      background: rgba(0,119,182,0.25);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .title{
+      margin: 0;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.2px;
+      color: var(--text);
+    }
+
+    .date{
+      margin: 6px 0 0;
+      font-weight: 900;
+      opacity: 0.95;
+      color: var(--text);
+    }
+
+    ul li a:hover .title,
+    ul li a:hover .date{
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 720px){
+      ul{
+        gap: 10px;
+      }
+      ul li{
+        width: 100%;
+        text-align: center;
+      }
+      ul li.featured{
+        margin-bottom: 0;
+      }
+      ul li.featured .title{
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</BaseLayout>
